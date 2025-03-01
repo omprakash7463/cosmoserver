@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: cosmo-shop-api
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_SECRET_KEY
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: CASHFREE_APP_ID
+        sync: false
+      - key: CASHFREE_SECRET_KEY
+        sync: false
+      - key: CASHFREE_API_VERSION
+        sync: false
+      - key: CASHFREE_ENV
+        sync: false
+      - key: PAYPAL_CLIENT_ID_SANDBOX
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET_SANDBOX
+        sync: false
+      - key: PAYPAL_CLIENT_ID_LIVE
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET_LIVE
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: ADMIN_URL
+        sync: false
