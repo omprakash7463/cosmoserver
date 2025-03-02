@@ -7,6 +7,7 @@ import productRouter from "./routes/productRoute.js";
 import cartRouter from "./routes/cartRoute.js";
 import orderRouter from "./routes/orderRoute.js";
 import connectCloudinary from "./config/cloudinary.js";
+import https from "https";
 
 // app config
 const app = express();
@@ -23,9 +24,11 @@ app.use(cors({
         'http://localhost:5173', 
         'http://localhost:5174',
         // Frontend on InfinityFree
-        process.env.FRONTEND_URL || 'https://cosmoshop.kesug.com',
+        process.env.FRONTEND_URL || 'https://cosmoshoponline.netlify.app',
         // Admin panel on Netlify
-        process.env.ADMIN_URL || 'https://admin-cosmoshop.netlify.app'
+        process.env.ADMIN_URL || 'https://admin-cosmoshop.netlify.app',
+        // Add your Render.com deployed URL here
+        process.env.APP_URL || 'https://cosmoshop-backend.onrender.com'
     ],
     credentials: true
 }));
@@ -35,6 +38,11 @@ app.use("/api/user", userRouter);
 app.use("/api/product", productRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/order", orderRouter);
+
+// Add ping endpoint
+app.get("/ping", (req, res) => {
+    res.send("pong");
+});
 
 // db config
 mongoose.set('strictQuery', false);
@@ -76,8 +84,22 @@ app.get("/", (req, res) => {
 // Start server
 const startServer = () => {
     try {
-        app.listen(port, () => {
+        const server = app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
+            
+            // Setup periodic ping to prevent sleep
+            const PING_INTERVAL = 14 * 60 * 1000; // 14 minutes
+            const APP_URL = process.env.APP_URL;
+            
+            if (APP_URL) {
+                setInterval(() => {
+                    https.get(APP_URL + '/ping', (resp) => {
+                        console.log('Ping successful:', new Date().toISOString());
+                    }).on('error', (err) => {
+                        console.log('Ping failed:', err.message);
+                    });
+                }, PING_INTERVAL);
+            }
         });
     } catch (error) {
         console.error('Error starting server:', error);
@@ -86,3 +108,4 @@ const startServer = () => {
 };
 
 startServer();
+
